@@ -4,8 +4,7 @@ pom.xml.asc
 *.class
 /lib/
 /classes/
-/target/
-/checkouts/
+ mm ,/checkouts/
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/
@@ -20,3 +19,6 @@ node_modules/
 /public/main.css
 .idea
 *.iml
+.terraform/
+.clj-kondo/
+.calva/
