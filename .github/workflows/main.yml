@@ -20,6 +20,7 @@ jobs:
   # Single deploy job since we're just deploying
   deploy:
     runs-on: ubuntu-latest
+    environment: dev
     steps: 
       - uses: hashicorp/setup-terraform@v2.0.3
       - uses: actions/checkout@v4
