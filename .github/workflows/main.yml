@@ -28,10 +28,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - run: terraform init 
-        working-directory: ./infra
+        working-directory: infra
 
       - id: plan
         run: terraform plan -no-color
-        working-directory: ./infra
+        working-directory: infra
       
 
