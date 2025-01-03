@@ -25,6 +25,9 @@ jobs:
       - uses: hashicorp/setup-terraform@v2.0.3
       - uses: actions/checkout@v4
 
+      - name: Public IP
+        uses: haythem/public-ip@v1.3
+  
       - run: terraform init 
         working-directory: infra
         env:
