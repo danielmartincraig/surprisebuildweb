@@ -5,7 +5,12 @@ terraform {
       version = "~> 4.16"
     }
   }
-
+  cloud { 
+    organization = "surprisebuild"
+    workspaces { 
+      name = "surprisebuild" 
+    } 
+  } 
   required_version = ">= 1.5.0"
 }
 
