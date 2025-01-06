@@ -73,38 +73,59 @@ resource "aws_vpc" "example" {
   cidr_block = "10.0.0.0/16"
 }
 
-
-resource "kubernetes_deployment" "nginx" {
+resource "kubernetes_deployment" "example" {
   metadata {
-    name = "nginx"
+    name = "terraform-example"
     labels = {
-      app = "nginx"
+      test = "MyExampleApp"
     }
   }
 
   spec {
-    replicas = 2
+    replicas = 3
 
     selector {
       match_labels = {
-        app = "nginx"
+        test = "MyExampleApp"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "nginx"
+          test = "MyExampleApp"
         }
       }
 
       spec {
         container {
-          name  = "nginx"
-          image = "nginx:1.14.2"
+          image = "nginx:1.21.6"
+          name  = "example"
 
-          port {
-            container_port = 80
+          resources {
+            limits = {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 80
+
+              http_header {
+                name  = "X-Custom-Header"
+                value = "Awesome"
+              }
+            }
+
+            initial_delay_seconds = 3
+            period_seconds        = 3
           }
         }
       }
@@ -112,21 +133,36 @@ resource "kubernetes_deployment" "nginx" {
   }
 }
 
-resource "kubernetes_service" "nginx" {
+resource "kubernetes_service" "example" {
   metadata {
-    name = "nginx"
+    name = "terraform-example"
   }
-
   spec {
     selector = {
-      app = "nginx"
+      app = kubernetes_pod.example.metadata.0.labels.app
     }
-
+    session_affinity = "ClientIP"
     port {
-      port        = 80
+      port        = 8080
       target_port = 80
     }
 
     type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_pod" "example" {
+  metadata {
+    name = "terraform-example"
+    labels = {
+      app = "MyApp"
+    }
+  }
+
+  spec {
+    container {
+      image = "nginx:1.21.6"
+      name  = "example"
+    }
   }
 }
