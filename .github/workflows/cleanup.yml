@@ -7,6 +7,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  TF_CLOUD_ORGANIZATION: "surprisebuild"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "surprisebuild"
+  CONFIG_DIRECTORY: "infra"
+
 permissions:
   contents: read
 
@@ -18,11 +24,13 @@ concurrency:
 
 jobs:
   # Single deploy job since we're just deploying
-  deploy:
+  cleanup:
     runs-on: ubuntu-latest
     environment: dev
     steps: 
       - uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - uses: actions/checkout@v4
 
       - name: Public IP
