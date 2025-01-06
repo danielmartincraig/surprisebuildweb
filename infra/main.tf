@@ -4,6 +4,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.16"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.6.1"
+    }
   }
   cloud { 
     organization = "surprisebuild"
