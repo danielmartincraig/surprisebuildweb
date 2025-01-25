@@ -22,6 +22,25 @@ resource "aws_vpc" "example" {
   cidr_block = "10.0.0.0/16"
 }
 
+resource "aws_internet_gateway" "example" {
+  vpc_id = aws_vpc.example.id
+}
+
+resource "aws_route_table" "example" {
+  vpc_id = aws_vpc.example.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.example.id
+  }
+}
+
+resource "aws_route_table_association" "example" {
+  count          = 2
+  subnet_id      = aws_subnet.example[count.index].id
+  route_table_id = aws_route_table.example.id
+}
+
 resource "aws_subnet" "example" {
   count = 2
   vpc_id            = aws_vpc.example.id
@@ -52,7 +71,16 @@ resource "aws_ecs_task_definition" "example" {
           containerPort = 80
           hostPort      = 80
         }
-      ]
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-create-group": "true",
+            "awslogs-group": "awslogs-example",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "awslogs-example"
+        }
+      },
     }
   ])
 }
