@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "example" {
   container_definitions = jsonencode([
     {
       name      = "example"
-      image     = "nginx:1.21.6"
+      image     = "nginx:1.27.3"
       essential = true
       portMappings = [
         {
