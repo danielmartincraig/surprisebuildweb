@@ -71,16 +71,7 @@ resource "aws_ecs_task_definition" "example" {
           containerPort = 80
           hostPort      = 80
         }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-create-group": "true",
-            "awslogs-group": "awslogs-example",
-            "awslogs-region": "us-east-1",
-            "awslogs-stream-prefix": "awslogs-example"
-        }
-      },
+      ]
     }
   ])
 }
