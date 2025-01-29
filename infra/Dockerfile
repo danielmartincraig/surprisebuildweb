@@ -4,7 +4,7 @@ FROM nginx:1.27.3
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy static website content
-COPY ../public/ /usr/share/nginx/html
+COPY public/ /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
