@@ -53,8 +53,8 @@ jobs:
       - name: Build, tag, and push Docker image
         run: |
           docker build -t ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} . -f infra/Dockerfile
-          docker tag ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+          docker tag ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} public.ecr.aws/d8i0d8d4/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker push public.ecr.aws/d8i0d8d4/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
       - run: terraform init 
         working-directory: infra
