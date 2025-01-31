@@ -1,7 +1,7 @@
 FROM nginx:1.27.3
 
 # Copy custom configuration file from the current directory
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/
 
 # Copy static website content
 COPY public/ /usr/share/nginx/html
