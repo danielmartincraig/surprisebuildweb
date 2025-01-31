@@ -80,7 +80,7 @@ resource "aws_ecs_service" "example" {
   name            = "example-service"
   cluster         = aws_ecs_cluster.example.id
   task_definition = aws_ecs_task_definition.example.arn
-  desired_count   = 3
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {
