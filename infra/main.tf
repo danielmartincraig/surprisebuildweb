@@ -121,7 +121,7 @@ resource "aws_ecs_service" "example" {
   }
 }
 
-resource "aws_logs_log_group" "example" {
+resource "aws_cloudwatch_log_group" "example" {
   name              = "/ecs/example"
   retention_in_days = 1
 }
