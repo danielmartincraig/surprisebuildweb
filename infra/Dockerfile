@@ -4,7 +4,7 @@ FROM nginx:1.27.3
 COPY nginx.conf /etc/nginx/
 
 # Copy static website content
-COPY public/ /usr/share/nginx/html
+COPY public /usr/share/nginx/html/
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
