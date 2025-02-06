@@ -87,7 +87,7 @@ resource "aws_ecs_task_definition" "example" {
   container_definitions = jsonencode([
     {
       name      = "example"
-      image     = "public.ecr.aws/d8i0d8d4/surprisebuild/surprisebuildweb:2da3c080605706322bfb041fa28934842df4e1ce"
+      image     = "public.ecr.aws/d8i0d8d4/surprisebuild/surprisebuildweb:b950168f67c6671bf791f2a66c9e99b9a9eb04bd"
       essential = true
       portMappings = [
         {
