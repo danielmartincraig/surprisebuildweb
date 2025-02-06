@@ -39,11 +39,6 @@ jobs:
       - name: Public IP
         uses: haythem/public-ip@v1.3
 
-      - name: Run a multi-line script
-        run: |
-          npm install
-          npm run release
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4.0.3
         with:
