@@ -1,12 +1,3 @@
-# manifold-experiment
+# surprisebuild
 
-## Development
-```shell
-yarn install # install NPM deps
-yarn dev # run dev build in watch mode with CLJS REPL
-```
-
-## Production
-```shell
-yarn release # build production bundle
-```
+This app repo showcases deploying a containerized web app to ECS using nginx, terraform, and github actions
