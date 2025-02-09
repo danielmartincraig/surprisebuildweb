@@ -1,4 +1,4 @@
-name: Deploy with Terraform
+name: Build and Push Docker Image
 on:
   # Runs on pushes targeting the default branch
   push:
