@@ -163,7 +163,7 @@ resource "aws_lb" "example" {
 resource "aws_lb_target_group" "example" {
   name     = "example-tg"
   port     = 80
-  protocol = "HTTP"
+  protocol = "HTTPS"
   vpc_id   = aws_vpc.example.id
   target_type = "ip"
 
