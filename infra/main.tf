@@ -163,7 +163,7 @@ resource "aws_lb" "example" {
 resource "aws_lb_target_group" "example" {
   name     = "example-tg"
   port     = 80
-  protocol = "HTTPS"
+  protocol = "HTTP"
   vpc_id   = aws_vpc.example.id
   target_type = "ip"
 
@@ -179,8 +179,11 @@ resource "aws_lb_target_group" "example" {
 
 resource "aws_lb_listener" "example" {
   load_balancer_arn = aws_lb.example.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
+
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.example.arn
 
   default_action {
     type             = "forward"
@@ -192,14 +195,32 @@ resource "aws_route53_zone" "example" {
   name = "surprisebuild.com"
 }
 
-resource "aws_route53_record" "www" {
-  zone_id = aws_route53_zone.example.zone_id
-  name    = "www"
-  type    = "A"
+resource "aws_acm_certificate" "example" {
+  domain_name       = "www.surprisebuild.com"
+  validation_method = "DNS"
 
-  alias {
-    name                   = aws_lb.example.dns_name
-    zone_id                = aws_lb.example.zone_id
-    evaluate_target_health = true
+  tags = {
+    Name = "example-cert"
   }
+}
+
+resource "aws_route53_record" "example_cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.example.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      type   = dvo.resource_record_type
+      record = dvo.resource_record_value
+    }
+  }
+
+  zone_id = aws_route53_zone.example.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  ttl     = 60
+  records = [each.value.record]
+}
+
+resource "aws_acm_certificate_validation" "example" {
+  certificate_arn         = aws_acm_certificate.example.arn
+  validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
 }
