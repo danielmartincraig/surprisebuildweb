@@ -220,6 +220,18 @@ resource "aws_route53_record" "example_cert_validation" {
   records = [each.value.record]
 }
 
+resource "aws_route53_record" "example" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "www.surprisebuild.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.example.dns_name
+    zone_id                = aws_lb.example.zone_id
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_acm_certificate_validation" "example" {
   certificate_arn         = aws_acm_certificate.example.arn
   validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
