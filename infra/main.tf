@@ -18,10 +18,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-module "cognito" {
-  source = "./modules/cognito"
-}
-
 resource "aws_vpc" "example" {
   cidr_block = "10.0.0.0/16"
 }
@@ -246,4 +242,49 @@ resource "aws_route53_record" "example" {
 resource "aws_acm_certificate_validation" "example" {
   certificate_arn         = aws_acm_certificate.example.arn
   validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
+}
+
+resource "aws_cognito_user_pool" "example" {
+  name = "example_user_pool"
+}
+
+resource "aws_cognito_user_pool_client" "example" {
+  name         = "example_user_pool_client"
+  user_pool_id = aws_cognito_user_pool.example.id
+}
+
+resource "aws_cognito_identity_pool" "example" {
+  identity_pool_name               = "example_identity_pool"
+  allow_unauthenticated_identities = false
+  allow_classic_flow               = false
+
+  cognito_identity_providers {
+    client_id               = aws_cognito_user_pool_client.example.id
+    provider_name           = aws_cognito_user_pool.example.endpoint
+    server_side_token_check = true
+  }
+}
+
+resource "aws_cognito_user_pool_domain" "example" {
+  domain      = "auth.surprisebuild.com"
+  certificate_arn = aws_acm_certificate.cert.arn
+  user_pool_id = aws_cognito_user_pool.example.id
+}
+
+resource "aws_cognito_user_pool_ui_customization" "example" {
+  user_pool_id = aws_cognito_user_pool.example.id
+  client_id    = aws_cognito_user_pool_client.example.id
+
+  css = <<CSS
+  /* Custom CSS for Cognito Hosted UI */
+  body {
+    background-color: #f0f0f0;
+  }
+  .banner {
+    background-color: #4CAF50;
+  }
+  .submitButton {
+    background-color: #4CAF50;
+  }
+  CSS
 }
