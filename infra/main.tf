@@ -297,16 +297,5 @@ resource "aws_cognito_user_pool_ui_customization" "example" {
   user_pool_id = aws_cognito_user_pool.example.id
   client_id    = aws_cognito_user_pool_client.example.id
 
-  css = <<CSS
-  /* Custom CSS for Cognito Hosted UI */
-  body {
-    background-color: #f0f0f0;
-  }
-  .banner {
-    background-color: #4CAF50;
-  }
-  .submitButton {
-    background-color: #4CAF50;
-  }
-  CSS
+  css = ".label-customizable {font-weight: 400;}"
 }
