@@ -190,7 +190,7 @@ resource "aws_lb_listener" "example" {
   protocol          = "HTTPS"
 
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.example.arn
+  certificate_arn   = aws_acm_certificate.parent_acm.arn
 
   default_action {
     type             = "forward"
@@ -202,8 +202,8 @@ resource "aws_route53_zone" "example" {
   name = "surprisebuild.com"
 }
 
-resource "aws_acm_certificate" "example" {
-  domain_name       = "www.surprisebuild.com"
+resource "aws_acm_certificate" "parent_acm" {
+  domain_name       = "surprisebuild.com"
   validation_method = "DNS"
 
   tags = {
@@ -213,7 +213,7 @@ resource "aws_acm_certificate" "example" {
 
 resource "aws_route53_record" "example_cert_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.example.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.parent_acm.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       type   = dvo.resource_record_type
       record = dvo.resource_record_value
@@ -264,7 +264,7 @@ resource "aws_route53_record" "auth-cognito-A" {
 }
 
 resource "aws_acm_certificate_validation" "example" {
-  certificate_arn         = aws_acm_certificate.example.arn
+  certificate_arn         = aws_acm_certificate.parent_acm.arn
   validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
 }
 
@@ -291,7 +291,7 @@ resource "aws_cognito_identity_pool" "example" {
 
 resource "aws_cognito_user_pool_domain" "example" {
   domain      = "auth.surprisebuild.com"
-  certificate_arn = aws_acm_certificate.example.arn
+  certificate_arn = aws_acm_certificate.parent_acm.arn
   user_pool_id = aws_cognito_user_pool.example.id
 }
 
