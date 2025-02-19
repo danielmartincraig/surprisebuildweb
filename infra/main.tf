@@ -206,6 +206,8 @@ resource "aws_acm_certificate" "parent_acm" {
   domain_name       = "surprisebuild.com"
   validation_method = "DNS"
 
+  subject_alternative_names = [ "*.surprisebuild.com" ]
+
   tags = {
     Name = "example-cert"
   }
