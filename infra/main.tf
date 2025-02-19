@@ -239,7 +239,7 @@ resource "aws_route53_record" "example" {
   }
 }
 
-resource "aws_route53_record" "example" {
+resource "aws_route53_record" "parent-A" {
   zone_id = aws_route53_zone.example.zone_id
   name    = "surprisebuild.com"
   type    = "A"
