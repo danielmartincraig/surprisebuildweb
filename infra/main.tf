@@ -239,6 +239,18 @@ resource "aws_route53_record" "example" {
   }
 }
 
+resource "aws_route53_record" "auth-cognito-A" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = aws_cognito_user_pool_domain.example.domain
+  type    = "A"
+  alias {
+    evaluate_target_health = false
+
+    name    = aws_cognito_user_pool_domain.example.cloudfront_distribution
+    zone_id = aws_cognito_user_pool_domain.example.cloudfront_distribution_zone_id
+  }
+}
+
 resource "aws_acm_certificate_validation" "example" {
   certificate_arn         = aws_acm_certificate.example.arn
   validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
