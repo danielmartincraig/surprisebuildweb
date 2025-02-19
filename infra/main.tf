@@ -239,6 +239,18 @@ resource "aws_route53_record" "example" {
   }
 }
 
+resource "aws_route53_record" "example" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "surprisebuild.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.example.dns_name
+    zone_id                = aws_lb.example.zone_id
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_route53_record" "auth-cognito-A" {
   zone_id = aws_route53_zone.example.zone_id
   name    = aws_cognito_user_pool_domain.example.domain
