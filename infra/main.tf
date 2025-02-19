@@ -213,22 +213,6 @@ resource "aws_acm_certificate" "parent_acm" {
   }
 }
 
-resource "aws_route53_record" "example_cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.parent_acm.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      type   = dvo.resource_record_type
-      record = dvo.resource_record_value
-    }
-  }
-
-  zone_id = aws_route53_zone.example.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
-}
-
 resource "aws_route53_record" "example" {
   zone_id = aws_route53_zone.example.zone_id
   name    = "www.surprisebuild.com"
@@ -280,11 +264,6 @@ resource "aws_route53_record" "dns-validation" {
   ttl             = 60
   type            = each.value.type
   zone_id         = aws_route53_zone.example.zone_id
-}
-
-resource "aws_acm_certificate_validation" "example" {
-  certificate_arn         = aws_acm_certificate.parent_acm.arn
-  validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
 }
 
 resource "aws_cognito_user_pool" "example" {
