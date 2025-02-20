@@ -14,12 +14,6 @@
    [emmy.calculus.manifold :as manifold]
    [emmy.env :as emmy]))
 
-(defui reset-displacements-button []
-  ($ :div ($ :button
-             {:on-click #(rf/dispatch [:coordinates/reset-app-db])}
-             "Reset")))
-
-
 (defui header []
   ($ :header.app-header
      ($ :div {:width 32}
