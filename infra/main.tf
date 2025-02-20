@@ -273,6 +273,8 @@ resource "aws_cognito_user_pool" "example" {
 resource "aws_cognito_user_pool_client" "example" {
   name         = "example_user_pool_client"
   user_pool_id = aws_cognito_user_pool.example.id
+
+  callback_urls = ["https://www.surprisebuild.com"]
 }
 
 resource "aws_cognito_identity_pool" "example" {
