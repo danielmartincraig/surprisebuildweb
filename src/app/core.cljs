@@ -12,7 +12,17 @@
    [goog.string :as gs]
    [goog.string.format]
    [emmy.calculus.manifold :as manifold]
-   [emmy.env :as emmy]))
+   [emmy.env :as emmy]
+   [react-oidc-context :as oidc :refer [AuthProvider]]))
+
+(def cognito-auth-config 
+  #js {
+       "authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU" 
+       "client_id" "67lmgncc2h7770qlgbtav0df6v" 
+       "redirect_uri" "https://www.surprisebuild.com" 
+       "response_type" "code" 
+       "scope" "openid",
+});
 
 (defui header []
   ($ :header.app-header
@@ -41,10 +51,18 @@
            :on-change (fn [^js e]
                         (on-edit (int (.. e -target -value))))}))))
 
+(defui authenticated-app []
+  ($ AuthProvider
+     cognito-auth-config
+     ($ :div
+        "authenticated, hello world")))
+  
+
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
     ($ :.app
        ($ header) 
+       ($ authenticated-app)
        ($ footer))))
 
 (defonce root
