@@ -13,7 +13,8 @@
    [goog.string.format]
    [emmy.calculus.manifold :as manifold]
    [emmy.env :as emmy]
-   [react-oidc-context :as oidc :refer [AuthProvider]]))
+   [react-oidc-context :as oidc :refer [AuthProvider]]
+   [react :refer [StrictMode]]))
 
 (def cognito-auth-config 
   #js {
@@ -52,10 +53,11 @@
                         (on-edit (int (.. e -target -value))))}))))
 
 (defui authenticated-app []
-  ($ AuthProvider
-     cognito-auth-config
-     ($ :div
-        "authenticated, hello world")))
+  ($ StrictMode
+     ($ AuthProvider
+        cognito-auth-config
+        ($ :div
+           "authenticated, hello world"))))
   
 
 (defui app []
