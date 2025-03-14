@@ -318,8 +318,7 @@ resource "aws_cognito_identity_pool" "example" {
 }
 
 resource "aws_cognito_user_pool_domain" "example" {
-  domain      = "auth.surprisebuild.com"
-  certificate_arn = aws_acm_certificate.parent_acm.arn
+  domain      = "authsurprisebuild"
   user_pool_id = aws_cognito_user_pool.example.id
 }
 
