@@ -13,17 +13,23 @@
    [goog.string.format]
    [emmy.calculus.manifold :as manifold]
    [emmy.env :as emmy]
-   [react-oidc-context :as oidc :refer [AuthProvider]]
+   [goog.object :as gobj]
+   [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
    [react :refer [StrictMode]]))
 
-(def cognito-auth-config 
-  #js {
-       "authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU" 
-       "client_id" "67lmgncc2h7770qlgbtav0df6v" 
-       "redirect_uri" "https://www.surprisebuild.com" 
-       "response_type" "code" 
-       "scope" "openid",
-});
+(def cognito-auth-config
+  #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU"
+       "client_id" "67lmgncc2h7770qlgbtav0df6v"
+       "redirect_uri" "https://www.surprisebuild.com"
+       "response_type" "code"
+       "scope" "openid"});
+
+(defn sign-out-redirect []
+  (let [clientId "67lmgncc2h7770qlgbtav0df6v"
+        logoutUri "https://www.surprisebuild.com"
+        cognitoDomain "https://auth.surprisebuild.com.auth.us-east-1.amazoncognito.com"]
+    (set! (.. js/window -location -href)
+          (str cognitoDomain "/logout?client_id=" clientId "&logout_uri=" (js/encodeURIComponent logoutUri)))))
 
 (defui header []
   ($ :header.app-header
@@ -34,38 +40,28 @@
   ($ :footer.app-footer
      ($ :small "made by Daniel Craig")))
 
-(defui manifold-point-viewer []
-  (let [manifold-point (hooks/use-subscribe [:app/manifold-point])]
-    ($ :manifold-point-viewer 
-       (str manifold-point))))
-
-(defui coordinate-field [{:keys [on-edit i]}]
-  (let [displacement (hooks/use-subscribe [:app/coordinate i])]
-    ($ :div
-       ($ :input
-          {:value displacement
-           :type :number
-           :min 1
-           :max 400
-           :placeholder 0
-           :style {:width "80%"}
-           :on-change (fn [^js e]
-                        (on-edit (int (.. e -target -value))))}))))
-
 (defui authenticated-app []
-  ($ StrictMode
-     ($ AuthProvider
-        cognito-auth-config
-        ($ :div
-           "authenticated, hello world"))))
+  (let [auth (useAuth)]
+    (re-frame.core/console :log (str "auth: " auth))
+    ($ :div
+       ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login")
+       ($ :button {:on-click sign-out-redirect} "Logout")
+       ($ :div
+          (cond
+            (gobj/get auth "isAuthenticated") "Authenticated"
+            (gobj/get auth "isLoading") "Loading..."
+            (gobj/get auth "error") (str "Error: " (gobj/get auth "error"))
+            :else "Not Authenticated")))))
   
-
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
-    ($ :.app
-       ($ header) 
-       ($ authenticated-app)
-       ($ footer))))
+    ($ StrictMode
+       ($ AuthProvider
+          cognito-auth-config
+          ($ :.app
+             ($ header)
+             ($ authenticated-app)
+             ($ footer))))))
 
 (defonce root
   (uix.dom/create-root (js/document.getElementById "root")))
