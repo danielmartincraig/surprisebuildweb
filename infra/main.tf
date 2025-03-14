@@ -268,6 +268,28 @@ resource "aws_route53_record" "dns-validation" {
 
 resource "aws_cognito_user_pool" "example" {
   name = "example_user_pool"
+
+  username_attributes = ["email"]
+  auto_verified_attributes = ["email"]
+
+  password_policy {
+    minimum_length    = 8
+    require_lowercase = true
+    require_numbers   = true
+    require_symbols   = true
+    require_uppercase = true
+  }
+
+  schema {
+    attribute_data_type      = "String"
+    name                     = "email"
+    required                 = true
+    mutable                  = false
+    string_attribute_constraints {
+      min_length = 1
+      max_length = 2048
+    }
+  }
 }
 
 resource "aws_cognito_user_pool_client" "example" {
@@ -275,6 +297,12 @@ resource "aws_cognito_user_pool_client" "example" {
   user_pool_id = aws_cognito_user_pool.example.id
 
   callback_urls = ["https://www.surprisebuild.com"]
+
+  explicit_auth_flows = [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_SRP_AUTH"
+  ]
 }
 
 resource "aws_cognito_identity_pool" "example" {

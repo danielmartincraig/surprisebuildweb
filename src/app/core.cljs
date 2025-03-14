@@ -18,11 +18,11 @@
    [react :refer [StrictMode]]))
 
 (def cognito-auth-config
-  #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU"
+  #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU/"
        "client_id" "67lmgncc2h7770qlgbtav0df6v"
        "redirect_uri" "https://www.surprisebuild.com/"
        "response_type" "code"
-       "scope" "openid"});
+       "scope" "openid profile email"});
 
 (defn sign-out-redirect []
   (let [clientId "67lmgncc2h7770qlgbtav0df6v"
