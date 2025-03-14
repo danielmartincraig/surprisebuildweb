@@ -322,9 +322,3 @@ resource "aws_cognito_user_pool_domain" "example" {
   user_pool_id = aws_cognito_user_pool.example.id
 }
 
-resource "aws_cognito_user_pool_ui_customization" "example" {
-  user_pool_id = aws_cognito_user_pool.example.id
-  client_id    = aws_cognito_user_pool_client.example.id
-
-  css = ".label-customizable {font-weight: 400;}"
-}
