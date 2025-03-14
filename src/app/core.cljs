@@ -20,13 +20,13 @@
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU"
        "client_id" "67lmgncc2h7770qlgbtav0df6v"
-       "redirect_uri" "https://www.surprisebuild.com"
+       "redirect_uri" "https://www.surprisebuild.com/"
        "response_type" "code"
        "scope" "openid"});
 
 (defn sign-out-redirect []
   (let [clientId "67lmgncc2h7770qlgbtav0df6v"
-        logoutUri "https://www.surprisebuild.com"
+        logoutUri "https://www.surprisebuild.com/"
         cognitoDomain "https://auth.surprisebuild.com.auth.us-east-1.amazoncognito.com"]
     (set! (.. js/window -location -href)
           (str cognitoDomain "/logout?client_id=" clientId "&logout_uri=" (js/encodeURIComponent logoutUri)))))
