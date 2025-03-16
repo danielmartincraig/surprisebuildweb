@@ -296,7 +296,7 @@ resource "aws_cognito_user_pool_client" "example" {
   name         = "example_user_pool_client"
   user_pool_id = aws_cognito_user_pool.example.id
 
-  callback_urls = ["http://localhost:8080"]
+  callback_urls = ["http://localhost:8080/"]
 
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
