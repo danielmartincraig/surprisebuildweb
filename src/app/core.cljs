@@ -11,16 +11,17 @@
    [clojure.string :as str]
    [goog.string :as gs]
    [goog.string.format]
-   [emmy.calculus.manifold :as manifold]
+   [emmy.calculus.manifold :as manifold] 
    [emmy.env :as emmy]
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
+  ;;  ["@aws-sdk/client-cognito-identity-provider"]
    [react :refer [StrictMode]]))
 
 (def cognito-auth-config
-  #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_0b51ky6YU/"
-       "client_id" "67lmgncc2h7770qlgbtav0df6v"
-       "redirect_uri" "https://www.surprisebuild.com/"
+  #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
+       "client_id" "1f7ud36u0tud5lt9pf7mb6cmoq"
+       "redirect_uri" "http://localhost:8080/"
        "response_type" "code"
        "scope" "openid profile email"});
 
@@ -30,6 +31,16 @@
         cognitoDomain "https://auth.surprisebuild.com.auth.us-east-1.amazoncognito.com"]
     (set! (.. js/window -location -href)
           (str cognitoDomain "/logout?client_id=" clientId "&logout_uri=" (js/encodeURIComponent logoutUri)))))
+
+(defn validate-user [username password email]
+  (and username password email))
+
+(defn sign-up-handler [[_ username password email]]
+  (let [clientId "1f7ud36u0tud5lt9pf7mb6cmoq"]
+    (when (validate-user username password email)
+      (rf/console :log (str "Signing up user: " username))
+
+      )))
 
 (defui header []
   ($ :header.app-header
