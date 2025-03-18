@@ -2,6 +2,10 @@
  :dev-http {8080 "public"}
  :builds {:app
           {:target :browser
+           :output-dir "public/js"
            :modules {:main {:entries [app.core]
                             :init-fn app.core/init}}
-           :devtools {:preloads [preload devtools.preload]}}}}
+           :devtools {:preloads [preload devtools.preload]}
+           :js-options
+            {:js-provider :external
+             :external-index "target/index.js"}}}}
