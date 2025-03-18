@@ -6,6 +6,7 @@ ALL["react-dom/client"] = require("react-dom/client");
 ALL["@aws-sdk/client-cognito-identity-provider"] = require("@aws-sdk/client-cognito-identity-provider");
 ALL["react-oidc-context"] = require("react-oidc-context");
 ALL["react-dom"] = require("react-dom");
+ALL["formik"] = require("formik");
 ALL["odex"] = require("odex");
 ALL["scheduler"] = require("scheduler");
 ALL["react"] = require("react");

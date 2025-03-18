@@ -17,7 +17,8 @@
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
    ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
    [react :refer [StrictMode]]
-   [shadow.cljs.modern :refer (js-await)]))
+   [shadow.cljs.modern :refer (js-await)]
+   [formik :refer [Formik]]))
 
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
@@ -50,8 +51,24 @@
       (rf/console :log (str "Signing up user: " username))
       (js-await (sign-up clientId username password email)))))
 
-(defui sign-up-form []
+(defui sign-out-form []
   ($ :div
+      ($ :button {:on-click sign-out-redirect} "Logout")))
+
+(defui sign-up-form [auth]
+  ($ :div
+      ($ Formik
+          {:initial-values {:username "" :password "" :email ""}
+          ;;:onSubmit (fn [values]
+                      ;; (rf/dispatch [:sign-up values]))
+           }
+          (fn [props]
+            ($ :form
+               ($ :input {:name "username" :placeholder "Username"})
+               ($ :input {:name "password" :type "password" :placeholder "Password"})
+               ($ :input {:name "email" :placeholder "Email"})
+               ($ :button {:type "submit"} "Sign Up")
+               ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login"))))
      ))
 
 (defui header []
@@ -65,15 +82,13 @@
 
 (defui authenticated-app []
   (let [auth (useAuth)] 
-    ($ :div
-       ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login")
-       ($ :button {:on-click sign-out-redirect} "Logout")
+    ($ :div 
        ($ :div
           (cond
-            (gobj/get auth "isAuthenticated") "Authenticated"
+            (gobj/get auth "isAuthenticated") ($ sign-out-form)
             (gobj/get auth "isLoading") "Loading..."
             (gobj/get auth "error") (str "Error: " (gobj/get auth "error"))
-            :else "Not Authenticated")))))
+            :else ($ sign-up-form auth))))))
   
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
