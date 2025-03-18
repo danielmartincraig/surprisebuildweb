@@ -16,12 +16,13 @@
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
    ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
-   [react :refer [StrictMode]]))
+   [react :refer [StrictMode]]
+   [shadow.cljs.modern :refer (js-await)]))
 
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
        "client_id" "1f7ud36u0tud5lt9pf7mb6cmoq"
-       "redirect_uri" "https://www.surprisebuild.com/"
+       "redirect_uri" "http://localhost:8080/"
        "response_type" "code"
        "scope" "openid profile email"});
 
@@ -35,12 +36,23 @@
 (defn validate-user [username password email]
   (and username password email))
 
+(defn sign-up [client-id username password email]
+  (let [client (CognitoIdentityProviderClient.) 
+        sign-up-command (SignUpCommand. (clj->js {:ClientId client-id
+                                                  :Username username
+                                                  :Password password
+                                                  :UserAttributes [{:Name "email" :Value email}]}))]
+    (.send client sign-up-command)))
+
 (defn sign-up-handler [[_ username password email]]
   (let [clientId "1f7ud36u0tud5lt9pf7mb6cmoq"]
     (when (validate-user username password email)
       (rf/console :log (str "Signing up user: " username))
+      (js-await (sign-up clientId username password email)))))
 
-      )))
+(defui sign-up-form []
+  ($ :div
+     ))
 
 (defui header []
   ($ :header.app-header
@@ -52,8 +64,7 @@
      ($ :small "made by Daniel Craig")))
 
 (defui authenticated-app []
-  (let [auth (useAuth)]
-    (re-frame.core/console :log (str "auth: " auth))
+  (let [auth (useAuth)] 
     ($ :div
        ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login")
        ($ :button {:on-click sign-out-redirect} "Logout")

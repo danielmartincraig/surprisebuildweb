@@ -2,7 +2,7 @@
   "name": "manifold-experiment",
   "scripts": {
     "dev": "shadow-cljs -A:dev watch app & yarn styles-dev",
-    "build-dev": "webpack --entry ./target/index.js --output-path public/js/webpack --mode development",
+    "build-dev": "shadow-cljs -A:dev release app && yarn styles-release && webpack --entry ./target/index.js --output-path public/js/webpack --mode development",
     "release": "shadow-cljs -A:dev release app && yarn styles-release",
     "styles-dev": "onchange -o '> public/main.css && lightningcss --bundle public/main.css -o public/main.css' -i src/**/*.css -- cat src/**/*.css",
     "styles-release": "cat src/**/*.css > public/main.css && lightningcss --minify --bundle public/main.css -o public/main.css"
@@ -20,6 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.768.0",
     "@smithy/util-stream": "^4.1.2",
+    "formik": "^2.4.6",
     "fraction.js": "4.2.1",
     "odex": "3.0.0-rc.4",
     "oidc-client-ts": "3.1.0",
