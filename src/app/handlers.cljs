@@ -3,8 +3,8 @@
             [app.db :as db]
             [app.fx :as fx]))
 
-(def load-app-state (rf/inject-cofx :store/app-state "manifold-experiment/app-state"))
-(def store-app-state (fx/store-app-state "manifold-experiment/app-state"))
+(def load-app-state (rf/inject-cofx :store/app-state "surprisebuildweb/app-state"))
+(def store-app-state (fx/store-app-state "surprisebuildweb/app-state"))
 
 
 (rf/reg-event-fx :app/init-db

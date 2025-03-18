@@ -11,14 +11,14 @@
    [clojure.string :as str]
    [goog.string :as gs]
    [goog.string.format]
-   [emmy.calculus.manifold :as manifold] 
+   [emmy.calculus.manifold :as manifold]
    [emmy.env :as emmy]
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
    ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
    [react :refer [StrictMode]]
    [shadow.cljs.modern :refer (js-await)]
-   [formik :refer [Formik]]))
+   [formik :refer [Formik Field]]))
 
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
@@ -38,7 +38,7 @@
   (and username password email))
 
 (defn sign-up [client-id username password email]
-  (let [client (CognitoIdentityProviderClient.) 
+  (let [client (CognitoIdentityProviderClient.)
         sign-up-command (SignUpCommand. (clj->js {:ClientId client-id
                                                   :Username username
                                                   :Password password
@@ -53,23 +53,22 @@
 
 (defui sign-out-form []
   ($ :div
-      ($ :button {:on-click sign-out-redirect} "Logout")))
+     ($ :button {:on-click sign-out-redirect} "Logout")))
 
 (defui sign-up-form [auth]
   ($ :div
-      ($ Formik
-          {:initial-values {:username "" :password "" :email ""}
+     ($ Formik
+        {:initial-values {:username "" :password "" :email ""}
           ;;:onSubmit (fn [values]
                       ;; (rf/dispatch [:sign-up values]))
-           }
-          (fn [props]
-            ($ :form
-               ($ :input {:name "username" :placeholder "Username"})
-               ($ :input {:name "password" :type "password" :placeholder "Password"})
-               ($ :input {:name "email" :placeholder "Email"})
-               ($ :button {:type "submit"} "Sign Up")
-               ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login"))))
-     ))
+         }
+        (fn [props]
+          ($ :form
+             ($ Field #js {:name "username" :placeholder "Username"})
+             ($ Field #js {:name "password" :type "password" :placeholder "Password"})
+             ($ Field #js {:name "email" :type "email" :placeholder "Email"})
+             ($ :button {:type "submit"} "Sign Up")
+             ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login"))))))
 
 (defui header []
   ($ :header.app-header
@@ -81,15 +80,15 @@
      ($ :small "made by Daniel Craig")))
 
 (defui authenticated-app []
-  (let [auth (useAuth)] 
-    ($ :div 
+  (let [auth (useAuth)]
+    ($ :div
        ($ :div
           (cond
             (gobj/get auth "isAuthenticated") ($ sign-out-form)
             (gobj/get auth "isLoading") "Loading..."
             (gobj/get auth "error") (str "Error: " (gobj/get auth "error"))
             :else ($ sign-up-form auth))))))
-  
+
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
     ($ StrictMode

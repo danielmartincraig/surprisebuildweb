@@ -1,5 +1,5 @@
 {
-  "name": "manifold-experiment",
+  "name": "surprisebuildweb",
   "scripts": {
     "dev": "shadow-cljs -A:dev watch app & yarn styles-dev",
     "build-dev": "shadow-cljs -A:dev release app && yarn styles-release && webpack --entry ./target/index.js --output-path public/js/webpack --mode development",
