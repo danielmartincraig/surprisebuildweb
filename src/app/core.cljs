@@ -18,7 +18,7 @@
    ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
    [react :refer [StrictMode]]
    [shadow.cljs.modern :refer (js-await)]
-   [formik :refer [Formik Field]]))
+   [formik :refer [Formik Field Form]]))
 
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
@@ -58,17 +58,16 @@
 (defui sign-up-form [auth]
   ($ :div
      ($ Formik
-        {:initial-values {:username "" :password "" :email ""}
-          ;;:onSubmit (fn [values]
-                      ;; (rf/dispatch [:sign-up values]))
-         }
+       {:initial-values {:username "" :password "" :email ""}
+         :onSubmit (fn [values] 
+                     (rf/console :log (str "Submitting sign-up form with values: " values))
+                     (sign-up-handler (vals values)))}
         (fn [props]
-          ($ :form
-             ($ Field #js {:name "username" :placeholder "Username"})
-             ($ Field #js {:name "password" :type "password" :placeholder "Password"})
-             ($ Field #js {:name "email" :type "email" :placeholder "Email"})
-             ($ :button {:type "submit"} "Sign Up")
-             ($ :button {:on-click (gobj/get auth "signinRedirect")} "Login"))))))
+          ($ Form
+             ($ Field {:name "username" :placeholder "Username"})
+             ($ Field {:name "password" :type "password" :placeholder "Password"})
+             ($ Field {:name "email" :type "email" :placeholder "Email"})
+             ($ :button {:type "submit"} "Sign Up"))))))
 
 (defui header []
   ($ :header.app-header
