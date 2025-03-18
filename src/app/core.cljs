@@ -15,7 +15,7 @@
    [emmy.env :as emmy]
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
-  ;;  ["@aws-sdk/client-cognito-identity-provider"]
+   ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
    [react :refer [StrictMode]]))
 
 (def cognito-auth-config
