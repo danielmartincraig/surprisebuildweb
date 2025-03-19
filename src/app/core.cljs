@@ -5,6 +5,7 @@
    [app.hooks :as hooks]
    [app.subs]
    [app.handlers]
+   [app.client :as client]
    [app.fx]
    [app.db]
    [re-frame.core :as rf]
@@ -15,9 +16,7 @@
    [emmy.env :as emmy]
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
-   ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
    [react :refer [StrictMode]]
-   [shadow.cljs.modern :refer (js-await)]
    [formik :refer [Formik Field Form]]))
 
 (def cognito-auth-config
@@ -27,47 +26,25 @@
        "response_type" "code"
        "scope" "openid profile email"});
 
-(defn sign-out-redirect []
-  (let [clientId "67lmgncc2h7770qlgbtav0df6v"
-        logoutUri "https://www.surprisebuild.com/"
-        cognitoDomain "https://authsurprisebuild.auth.us-east-1.amazoncognito.com"]
-    (set! (.. js/window -location -href)
-          (str cognitoDomain "/logout?client_id=" clientId "&logout_uri=" (js/encodeURIComponent logoutUri)))))
-
-(defn validate-user [username password email]
-  (and username password email))
-
-(defn sign-up [client-id username password email]
-  (let [client (CognitoIdentityProviderClient.)
-        sign-up-command (SignUpCommand. (clj->js {:ClientId client-id
-                                                  :Username username
-                                                  :Password password
-                                                  :UserAttributes [{:Name "email" :Value email}]}))]
-    (.send client sign-up-command)))
-
-(defn sign-up-handler [[_ username password email]]
-  (let [clientId "1f7ud36u0tud5lt9pf7mb6cmoq"]
-    (when (validate-user username password email)
-      (rf/console :log (str "Signing up user: " username))
-      (js-await (sign-up clientId username password email)))))
 
 (defui sign-out-form []
   ($ :div
-     ($ :button {:on-click sign-out-redirect} "Logout")))
+     ($ :button {:on-click client/sign-out-redirect} "Logout")))
 
 (defui sign-up-form [auth]
   ($ :div
      ($ Formik
-       {:initial-values {:username "" :password "" :email ""}
+        {:initial-values #js {:username "" :password "" :email ""}
          :onSubmit (fn [values] 
-                     (rf/console :log (str "Submitting sign-up form with values: " values))
-                     (sign-up-handler (vals values)))}
-        (fn [props]
-          ($ Form
-             ($ Field {:name "username" :placeholder "Username"})
-             ($ Field {:name "password" :type "password" :placeholder "Password"})
-             ($ Field {:name "email" :type "email" :placeholder "Email"})
-             ($ :button {:type "submit"} "Sign Up"))))))
+                     (let [username (gobj/get values "username")
+                           password (gobj/get values "password")
+                           email (gobj/get values "email")] 
+                       (rf/dispatch [:app/handle-sign-up username password email])))}
+        ($ Form
+           ($ Field {:name "username" :placeholder "Username"})
+           ($ Field {:name "password" :type "password" :placeholder "Password"})
+           ($ Field {:name "email" :type "email" :placeholder "Email"})
+           ($ :button {:type "submit"} "Sign Up")))))
 
 (defui header []
   ($ :header.app-header
