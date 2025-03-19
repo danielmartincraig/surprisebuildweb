@@ -3,13 +3,12 @@
    ["@aws-sdk/client-cognito-identity-provider" :as cognito :refer [SignUpCommand, CognitoIdentityProviderClient]]
    [re-frame.core :as rf]))
 
-(defn sign-up [client-id username password email]
+(defn sign-up [client-id password email]
   (let [client (CognitoIdentityProviderClient. #js {:region "us-east-1"}) 
         sign-up-command (SignUpCommand.  (clj->js {:ClientId client-id
                                                    :Username email
                                                    :Password password
-                                                   :UserAttributes [{:Name "email" :Value email}]}))]
-    (rf/console :log (str "client sign-up: signing up user " username " " email " " client-id " " password))
+                                                   :UserAttributes [{:Name "email" :Value email}]}))] 
     (.send client sign-up-command)))
 
 (defn sign-out-redirect []

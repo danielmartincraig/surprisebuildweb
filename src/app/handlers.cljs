@@ -14,27 +14,28 @@
                  (fn [{:store/keys [app-state]} [_ default-db]]
                    {:db (update default-db :app-state into app-state)}))
 
-(rf/reg-fx :app/sign-up
-           (fn [client-id username password email]
-             #_(rf/console :log (str "sign-up: signing up user " username))
-             (js-await (client/sign-up client-id username password email))))
+(rf/reg-event-fx :app/signup-success-fx
+           (fn [_ _]
+             (rf/console :log "Successfully signed up")))
+
+(rf/reg-event-fx :app/signup-failure-fx
+           (fn [_ _ ]
+             (rf/console :log "Failed to sign up")))
 
 (rf/reg-event-fx :app/sign-up-using-promise
-                 (fn [{:keys [db] :as cofx} [_ client-id username password email]]
+                 (fn [{:keys [db] :as cofx} [_ client-id password email]]
                    (let [client-id "1f7ud36u0tud5lt9pf7mb6cmoq"]
-                     (rf/console :log (str "handle-sign-up: signing up user " username))
-                     {:promise {:call #(-> (client/sign-up client-id username password email)
-                                           (.then (fn [response]
-                                                    (rf/console :log (str response)))))
-                                ;;:on-success [:your-success-handler "some-str"]
-                                ;;:on-failure [:your-failure-handler {:some :map}]
+                     {:promise {:call #(-> (client/sign-up client-id password email)
+                                           (.then (fn [response] 
+                                                    (rf/console :log "submitted sign-up request"))))
+                                :on-success [:app/signup-success-fx]
+                                :on-failure [:app/signup-failure-fx]
                                 }})))
 
 (rf/reg-event-fx :app/handle-sign-up
-                 (fn [{:keys [db] :as cofx} [_ username password email]] 
+                 (fn [{:keys [db] :as cofx} [_ password email]] 
                    (let [client-id "1f7ud36u0tud5lt9pf7mb6cmoq"]
-                     (rf/console :log (str "handle-sign-up: signing up user " username))
-                     {:fx [[:dispatch [:app/sign-up-using-promise client-id username password email]]]})))
+                     {:fx [[:dispatch [:app/sign-up-using-promise client-id password email]]]})))
 
 (rf/reg-event-db :coordinates/update-coordinates
                  [store-app-state]

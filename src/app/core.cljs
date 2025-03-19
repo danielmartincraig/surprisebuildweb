@@ -34,16 +34,14 @@
 (defui sign-up-form [auth]
   ($ :div
      ($ Formik
-        {:initial-values #js {:username "" :password "" :email ""}
+        {:initial-values #js {:password "" :email ""}
          :onSubmit (fn [values] 
-                     (let [username (gobj/get values "username")
-                           password (gobj/get values "password")
+                     (let [password (gobj/get values "password")
                            email (gobj/get values "email")] 
-                       (rf/dispatch [:app/handle-sign-up username password email])))}
-        ($ Form
-           ($ Field {:name "username" :placeholder "Username"})
-           ($ Field {:name "password" :type "password" :placeholder "Password"})
+                       (rf/dispatch [:app/handle-sign-up password email])))}
+        ($ Form 
            ($ Field {:name "email" :type "email" :placeholder "Email"})
+           ($ Field {:name "password" :type "password" :placeholder "Password"})
            ($ :button {:type "submit"} "Sign Up")))))
 
 (defui header []
