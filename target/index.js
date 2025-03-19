@@ -4,7 +4,6 @@
 var ALL = {};
 ALL["react-dom/client"] = require("react-dom/client");
 ALL["@aws-sdk/client-cognito-identity-provider"] = require("@aws-sdk/client-cognito-identity-provider");
-ALL["react-refresh/runtime"] = require("react-refresh/runtime");
 ALL["react-oidc-context"] = require("react-oidc-context");
 ALL["react-dom"] = require("react-dom");
 ALL["formik"] = require("formik");
