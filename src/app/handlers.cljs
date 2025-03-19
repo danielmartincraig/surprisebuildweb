@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [app.db :as db]
             [app.client :as client]
+            [re-promise.core]
             [shadow.cljs.modern :refer (js-await)]
             [app.fx :as fx]))
 
@@ -18,11 +19,22 @@
              #_(rf/console :log (str "sign-up: signing up user " username))
              (js-await (client/sign-up client-id username password email))))
 
+(rf/reg-event-fx :app/sign-up-using-promise
+                 (fn [{:keys [db] :as cofx} [_ client-id username password email]]
+                   (let [client-id "1f7ud36u0tud5lt9pf7mb6cmoq"]
+                     (rf/console :log (str "handle-sign-up: signing up user " username))
+                     {:promise {:call #(-> (client/sign-up client-id username password email)
+                                           (.then (fn [response]
+                                                    (rf/console :log (str response)))))
+                                ;;:on-success [:your-success-handler "some-str"]
+                                ;;:on-failure [:your-failure-handler {:some :map}]
+                                }})))
+
 (rf/reg-event-fx :app/handle-sign-up
                  (fn [{:keys [db] :as cofx} [_ username password email]] 
                    (let [client-id "1f7ud36u0tud5lt9pf7mb6cmoq"]
                      (rf/console :log (str "handle-sign-up: signing up user " username))
-                     {:fx [[:app/sign-up client-id username password email]]})))
+                     {:fx [[:dispatch [:app/sign-up-using-promise client-id username password email]]]})))
 
 (rf/reg-event-db :coordinates/update-coordinates
                  [store-app-state]

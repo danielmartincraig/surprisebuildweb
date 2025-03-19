@@ -4,12 +4,12 @@
    [re-frame.core :as rf]))
 
 (defn sign-up [client-id username password email]
-  (let [client (CognitoIdentityProviderClient. #js {}) 
-        sign-up-command (SignUpCommand.  #js {:ClientId client-id
-                                              :Username username
-                                              :Password password
-                                              :UserAttributes [#js {:Name "email" :Value email}]})]
-    (rf/console :log (str "signing up user " username))
+  (let [client (CognitoIdentityProviderClient. #js {:region "us-east-1"}) 
+        sign-up-command (SignUpCommand.  (clj->js {:ClientId client-id
+                                                   :Username email
+                                                   :Password password
+                                                   :UserAttributes [{:Name "email" :Value email}]}))]
+    (rf/console :log (str "client sign-up: signing up user " username " " email " " client-id " " password))
     (.send client sign-up-command)))
 
 (defn sign-out-redirect []
