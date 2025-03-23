@@ -13,7 +13,7 @@ RUN curl -L -O https://github.com/clojure/brew-install/releases/latest/download/
 COPY . /app
 WORKDIR /app
 
-RUN yarn install && yarn build-dev
+RUN yarn install && yarn release
 
 FROM nginx:1.27.3
 

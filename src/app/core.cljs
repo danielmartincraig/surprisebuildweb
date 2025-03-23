@@ -16,8 +16,7 @@
    [emmy.env :as emmy]
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
-   [react :refer [StrictMode]]
-   [formik :refer [Formik Field Form]]))
+   [react :refer [StrictMode]]))
 
 (def client-id "1f7ud36u0tud5lt9pf7mb6cmoq")
 (def redirect_uri "https://www.surprisebuild.com/")
@@ -39,19 +38,6 @@
 (defui sign-out-form []
   ($ :div
      ($ :button {:on-click client/sign-out-redirect} "Logout")))
-
-(defui sign-up-form [auth]
-  ($ :div
-     ($ Formik
-        {:initial-values #js {:password "" :email ""}
-         :onSubmit (fn [values] 
-                     (let [password (gobj/get values "password")
-                           email (gobj/get values "email")] 
-                       (rf/dispatch [:app/handle-sign-up password email])))}
-        ($ Form 
-           ($ Field {:name "email" :type "email" :placeholder "Email"})
-           ($ Field {:name "password" :type "password" :placeholder "Password"})
-           ($ :button {:type "submit"} "Sign Up")))))
 
 (defui header []
   ($ :header.app-header
