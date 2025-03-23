@@ -290,6 +290,12 @@ resource "aws_cognito_user_pool" "example" {
       max_length = 2048
     }
   }
+
+  verification_message_template {
+    default_email_option = "CONFIRM_WITH_LINK"
+    email_message_by_link = "Click the link below to verify your email address: {##Verify Email##}"
+    email_subject = "Verify your email for SurpriseBuild"
+  }
 }
 
 resource "aws_cognito_user_pool_client" "example" {
