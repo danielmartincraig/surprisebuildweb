@@ -19,13 +19,22 @@
    [react :refer [StrictMode]]
    [formik :refer [Formik Field Form]]))
 
+(def client-id "1f7ud36u0tud5lt9pf7mb6cmoq")
+(def redirect_uri "https://www.surprisebuild.com/")
+
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
-       "client_id" "1f7ud36u0tud5lt9pf7mb6cmoq"
-       "redirect_uri" "http://localhost:8080/"
+       "client_id" client-id
+       "redirect_uri" redirect_uri
        "response_type" "code"
        "scope" "openid profile email"});
 
+(defui sign-in-form [] 
+  ($ :div
+     ($ :h2 "Login")
+     ($ :a {:href (str "https://authsurprisebuild.auth.us-east-1.amazoncognito.com/login?client_id=" client-id "&response_type=code&scope=email+openid&redirect_uri=" (js/encodeURIComponent redirect_uri))} "Login")
+     ($ :p "Don't have an account?  Click the 'Sign Up' button to create one.")
+     ($ :a {:href (str "https://authsurprisebuild.auth.us-east-1.amazoncognito.com/signup?client_id=" client-id "&response_type=code&scope=email+openid&redirect_uri=" (js/encodeURIComponent redirect_uri))} "Sign Up")))
 
 (defui sign-out-form []
   ($ :div
@@ -61,7 +70,7 @@
             (gobj/get auth "isAuthenticated") ($ sign-out-form)
             (gobj/get auth "isLoading") "Loading..."
             (gobj/get auth "error") (str "Error: " (gobj/get auth "error"))
-            :else ($ sign-up-form auth))))))
+            :else ($ sign-in-form auth))))))
 
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
