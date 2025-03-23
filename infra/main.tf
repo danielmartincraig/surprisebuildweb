@@ -303,6 +303,8 @@ resource "aws_cognito_user_pool_client" "example" {
     "ALLOW_REFRESH_TOKEN_AUTH",
     "ALLOW_USER_SRP_AUTH"
   ]
+
+  supported_identity_providers = ["COGNITO"]
 }
 
 resource "aws_cognito_identity_pool" "example" {
