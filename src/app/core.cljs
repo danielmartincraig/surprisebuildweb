@@ -12,8 +12,6 @@
    [clojure.string :as str]
    [goog.string :as gs]
    [goog.string.format]
-   [emmy.calculus.manifold :as manifold]
-   [emmy.env :as emmy]
    [goog.object :as gobj]
    [react-oidc-context :as oidc :refer [AuthProvider useAuth]]
    [react :refer [StrictMode]]))
@@ -26,14 +24,12 @@
        "client_id" client-id
        "redirect_uri" redirect_uri
        "response_type" "code"
-       "scope" "openid profile email"});
+       "scope" "openid email"});
 
-(defui sign-in-form [] 
+(defui sign-in-form [auth] 
   ($ :div
      ($ :h2 "Login")
-     ($ :a {:href (str "https://authsurprisebuild.auth.us-east-1.amazoncognito.com/login?client_id=" client-id "&response_type=code&scope=email+openid&redirect_uri=" (js/encodeURIComponent redirect_uri))} "Login")
-     ($ :p "Don't have an account?  Click the 'Sign Up' button to create one.")
-     ($ :a {:href (str "https://authsurprisebuild.auth.us-east-1.amazoncognito.com/signup?client_id=" client-id "&response_type=code&scope=email+openid&redirect_uri=" (js/encodeURIComponent redirect_uri))} "Sign Up")))
+     ($ :button {:on-click (fn [] (.signinRedirect ^js auth))} "Log in")))
 
 (defui sign-out-form []
   ($ :div
@@ -53,10 +49,12 @@
     ($ :div
        ($ :div
           (cond
-            (gobj/get auth "isAuthenticated") ($ sign-out-form)
-            (gobj/get auth "isLoading") "Loading..."
-            (gobj/get auth "error") (str "Error: " (gobj/get auth "error"))
-            :else ($ sign-in-form auth))))))
+            (.-isAuthenticated auth) ($ sign-out-form)
+            (.-isLoading auth) "Loading..."
+            (.-error auth) (str "Error: " (gobj/get auth "error"))
+            ;;:else ($ sign-in-form auth)
+             :else (.signinRedirect auth)
+            )))))
 
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
