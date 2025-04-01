@@ -26,7 +26,7 @@
        "response_type" "code"
        "scope" "openid email"});
 
-(defui sign-in-form [auth] 
+(defui sign-in-form [{:keys [auth]}] 
   ($ :div
      ($ :h2 "Login")
      ($ :button {:on-click (fn [] (.signinRedirect ^js auth))} "Log in")))
@@ -52,8 +52,7 @@
             (.-isAuthenticated auth) ($ sign-out-form)
             (.-isLoading auth) "Loading..."
             (.-error auth) (str "Error: " (gobj/get auth "error"))
-            ;;:else ($ sign-in-form auth)
-             :else (.signinRedirect auth)
+            :else ($ sign-in-form {:auth auth}) 
             )))))
 
 (defui app []
