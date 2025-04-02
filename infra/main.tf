@@ -305,6 +305,7 @@ resource "aws_cognito_user_pool_client" "example" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid"]
   callback_urls = ["http://localhost:8080/", "https://www.surprisebuild.com/"]
+  logout_urls =   ["http://localhost:8080/", "https://www.surprisebuild.com/"]
 
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
