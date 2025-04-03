@@ -5,7 +5,6 @@
    [app.hooks :as hooks]
    [app.subs]
    [app.handlers]
-   [app.client :as client]
    [app.fx]
    [app.db]
    [re-frame.core :as rf]
@@ -17,23 +16,34 @@
    [react :refer [StrictMode]]))
 
 (def client-id "1f7ud36u0tud5lt9pf7mb6cmoq")
-(def redirect_uri "https://www.surprisebuild.com/")
+(def redirect_uri "http://localhost:8080/")
+
+(defn on-sign-in-callback []
+  (set! (.. js/window -location -href) "/"))
 
 (def cognito-auth-config
   #js {"authority" "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_R56ssR1OX"
        "client_id" client-id
        "redirect_uri" redirect_uri
        "response_type" "code"
-       "scope" "openid email"});
+       "scope" "openid email"
+       "onSigninCallback" on-sign-in-callback});
 
 (defui sign-in-form [{:keys [auth]}] 
   ($ :div
      ($ :h2 "Login")
      ($ :button {:on-click (fn [] (.signinRedirect ^js auth))} "Log in")))
 
-(defui sign-out-form []
+(defui sign-out-form [{:keys [auth]}]
   ($ :div
-     ($ :button {:on-click client/sign-out-redirect} "Logout")))
+     ($ :button {:on-click (fn [] (.removeUser ^js auth))} "Logout")))
+
+(defui profile-view [{:keys [auth]}]
+  (let [user (.-user auth)
+        profile (.-profile user)]
+    ($ :div
+       ($ :p (str "Logged in as: " (.-email profile))) 
+       ($ sign-out-form {:auth auth}))))
 
 (defui header []
   ($ :header.app-header
@@ -47,13 +57,12 @@
 (defui authenticated-app []
   (let [auth (useAuth)]
     ($ :div
-       ($ :div
-          (cond
-            (.-isAuthenticated auth) ($ sign-out-form)
-            (.-isLoading auth) "Loading..."
-            (.-error auth) (str "Error: " (gobj/get auth "error"))
-            :else ($ sign-in-form {:auth auth}) 
-            )))))
+       (cond
+         (.-isAuthenticated auth) ($ profile-view {:auth auth})
+         (.-isLoading auth) "Loading..."
+         (.-error auth) (str "Error: " (gobj/get auth "error"))
+         :else ($ sign-in-form {:auth auth}) 
+         ))))
 
 (defui app []
   (let [todos (hooks/use-subscribe [:app/todos])]
