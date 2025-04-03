@@ -16,7 +16,7 @@
    [react :refer [StrictMode]]))
 
 (def client-id "1f7ud36u0tud5lt9pf7mb6cmoq")
-(def redirect_uri "http://localhost:8080/")
+(def redirect_uri "https://www.surprisebuild.com/")
 
 (defn on-sign-in-callback []
   (set! (.. js/window -location -href) "/"))
