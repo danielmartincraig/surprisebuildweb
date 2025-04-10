@@ -4,7 +4,7 @@
     "dev": "shadow-cljs -A:dev watch app & yarn styles-dev",
     "release": "shadow-cljs -A:dev release app && yarn styles-release",
     "styles-dev": "onchange -o '> public/main.css && lightningcss --bundle public/main.css -o public/main.css' -i src/**/*.css -- cat src/**/*.css",
-    "styles-release": "cat src/**/*.css > public/main.css && lightningcss --minify --bundle public/main.css -o public/main.css"
+    "styles-release": "cat src/**/*.css > public/main.css && lightningcss --minify --bundle public/main.css -o public/main.css && echo >> public/main.css"
   },
   "devDependencies": {
     "lightningcss-cli": "^1.19.0",
