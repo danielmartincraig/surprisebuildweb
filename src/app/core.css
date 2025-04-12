@@ -39,7 +39,7 @@ a {
 .app {
     display: flex;
     flex-direction: column;
-    width: 460px;
+    width: 100vw;
     background: #fafafa;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);

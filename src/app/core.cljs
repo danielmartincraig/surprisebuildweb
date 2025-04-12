@@ -2,11 +2,13 @@
   (:require
    [uix.core :as uix :refer [defui $]]
    [uix.dom]
+   [uix.re-frame :as urf]
    [app.hooks :as hooks]
    [app.subs]
    [app.handlers]
    [app.fx]
    [app.db]
+   [app.config :as config]
    [re-frame.core :as rf]
    [clojure.string :as str]
    [goog.string :as gs]
@@ -16,7 +18,7 @@
    [react :refer [StrictMode]]))
 
 (def client-id "1f7ud36u0tud5lt9pf7mb6cmoq")
-(def redirect_uri "https://www.surprisebuild.com/")
+(def redirect_uri (if config/debug? "http://localhost:8080/" "https://www.surprisebuild.com/"))
 
 (defn on-sign-in-callback []
   (set! (.. js/window -location -href) "/"))
@@ -29,7 +31,14 @@
        "scope" "openid email"
        "onSigninCallback" on-sign-in-callback});
 
-(defui sign-in-form [{:keys [auth]}] 
+(defn comparison-form []
+  (let [parts (urf/use-subscribe [:app/comparison-parts])] 
+    ($ :div
+       ($ :p "Does " (:a parts) " connect to " (:b parts) "?")
+       ($ :button {:on-click (fn [])} "yes")
+       ($ :button {:on-click (fn [])} "no"))))
+
+(defui sign-in-form [{:keys [auth]}]
   ($ :div
      ($ :h2 "Login")
      ($ :button {:on-click (fn [] (.signinRedirect ^js auth))} "Log in")))
@@ -45,6 +54,11 @@
        ($ :p (str "Logged in as: " (.-email profile))) 
        ($ sign-out-form {:auth auth}))))
 
+(defui body []
+  ($ :div 
+     ($ comparison-form) 
+     ($ profile-view {:auth (useAuth)})))
+
 (defui header []
   ($ :header.app-header
      ($ :div {:width 32}
@@ -58,7 +72,7 @@
   (let [auth (useAuth)]
     ($ :div
        (cond
-         (.-isAuthenticated auth) ($ profile-view {:auth auth})
+         (.-isAuthenticated auth) ($ body)
          (.-isLoading auth) "Loading..."
          (.-error auth) (str "Error: " (gobj/get auth "error"))
          :else ($ sign-in-form {:auth auth}) 

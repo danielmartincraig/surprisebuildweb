@@ -14,10 +14,20 @@
             (fn [db _]
               (:app-state db)))
 
+(rf/reg-sub :app/comparison
+            :<- [:app/app-state]
+            (fn [app-state _]
+              (:comparison app-state)))
+
 (rf/reg-sub :app/coordinates
             :<- [:app/app-state]
             (fn [app-state _]
               (:coordinates app-state)))
+
+(rf/reg-sub :app/comparison-parts
+            :<- [:app/comparison]
+            (fn [comparison _]
+              (:parts comparison)))
 
 (rf/reg-sub :app/coordinate
             :<- [:app/coordinates]
