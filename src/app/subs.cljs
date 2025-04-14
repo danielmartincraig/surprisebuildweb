@@ -43,7 +43,7 @@
 (comment
   @(rf/subscribe [:app/app-state])
 
-  @(rf/subscribe [:app/coordinates])
+  @(rf/subscribe [:app/comparison-parts])
 
   @(rf/subscribe [:app/manifold-point])
 

@@ -3,5 +3,5 @@
 (def default-db
   {:todos (sorted-map-by >)
    :app-state {:coordinates [1 1 1]
-               :comparison {:parts {:a 32523
-                                    :b 3673}}}})
+               :comparison {:parts ["18654" "4459"]}
+               :part-list ["18654" "4459" "65249" "60483"]}})

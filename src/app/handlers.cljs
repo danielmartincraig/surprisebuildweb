@@ -22,3 +22,9 @@
                  [store-app-state]
                  (fn [db _]
                    db/default-db))
+
+(rf/reg-event-db :app/shuffle-comparison-parts
+                 []
+                 (fn [db _]
+                   (assoc-in db [:app-state :comparison :parts]
+                             (take 2 (shuffle (get-in db [:app-state :part-list]))))))

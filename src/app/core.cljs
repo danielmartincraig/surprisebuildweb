@@ -33,16 +33,16 @@
        "onSigninCallback" on-sign-in-callback});
 
 (defn comparison-form []
-  (let [parts (urf/use-subscribe [:app/comparison-parts])] 
+  (let [[partA partB] (urf/use-subscribe [:app/comparison-parts])] 
     ($ :div
        ($ :table 
           ($ :tbody
              ($ :tr
-                ($ :td ($ :img {:src (str cdn-domain-name "/pin.png")}))
-                ($ :td ($ :img {:src (str cdn-domain-name "/spacer.png")})))))
+                ($ :td ($ :img {:src (str cdn-domain-name "/" partA ".png")}))
+                ($ :td ($ :img {:src (str cdn-domain-name "/" partB ".png")})))))
        ($ :p "Do these two parts connect?")
-       ($ :button {:on-click (fn [])} "yes")
-       ($ :button {:on-click (fn [])} "no"))))
+       ($ :button {:on-click #(rf/dispatch [:app/shuffle-comparison-parts])} "yes")
+       ($ :button {:on-click #(rf/dispatch [:app/shuffle-comparison-parts])} "no"))))
 
 (defui sign-in-form [{:keys [auth]}]
   ($ :div
