@@ -340,4 +340,7 @@ resource "aws_s3_bucket" "example" {
 resource "aws_s3_bucket_acl" "example" {
 
   bucket = aws_s3_bucket.example.id
+  access_control_policy {
+    
+  }
 }
