@@ -19,6 +19,7 @@
 
 (def client-id "1f7ud36u0tud5lt9pf7mb6cmoq")
 (def redirect_uri (if config/debug? "http://localhost:8080/" "https://www.surprisebuild.com/"))
+(def cdn-domain-name "https://d32bykpr179a34.cloudfront.net")
 
 (defn on-sign-in-callback []
   (set! (.. js/window -location -href) "/"))
@@ -34,7 +35,12 @@
 (defn comparison-form []
   (let [parts (urf/use-subscribe [:app/comparison-parts])] 
     ($ :div
-       ($ :p "Does " (:a parts) " connect to " (:b parts) "?")
+       ($ :table 
+          ($ :tbody
+             ($ :tr
+                ($ :td ($ :img {:src (str cdn-domain-name "/pin.png")}))
+                ($ :td ($ :img {:src (str cdn-domain-name "/spacer.png")})))))
+       ($ :p "Do these two parts connect?")
        ($ :button {:on-click (fn [])} "yes")
        ($ :button {:on-click (fn [])} "no"))))
 
