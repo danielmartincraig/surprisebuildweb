@@ -356,7 +356,7 @@ resource "aws_cloudfront_distribution" "example" {
   is_ipv6_enabled     = true
 
   default_cache_behavior {
-    target_origin_id       = local.s3_origin_id
+    target_origin_id       = "S3-${aws_s3_bucket.example.id}"
     viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = ["GET", "HEAD"]
