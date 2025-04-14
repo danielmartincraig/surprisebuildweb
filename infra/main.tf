@@ -336,11 +336,3 @@ resource "aws_cognito_user_pool_domain" "example" {
 resource "aws_s3_bucket" "example" {
   bucket = "surprisebuild-resources-bucket"
 }
-
-resource "aws_s3_bucket_acl" "example" {
-
-  bucket = aws_s3_bucket.example.id
-  access_control_policy {
-    
-  }
-}
